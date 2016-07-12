@@ -35,14 +35,25 @@ class WeatherEndpoint(APITestCase):
         response = self.client.get('/London/3/')
         self.assertEqual(response.status_code, self.status.HTTP_200_OK)
 
-    def test_redirect(self):
-        response = self.client.get('/London/3')
-        self.assertEqual(response.status_code, self.status.HTTP_301_MOVED_PERMANENTLY)
-
     def test_invalid(self):
         response = self.client.get('///')
         self.assertEqual(response.status_code, self.status.HTTP_404_NOT_FOUND)
 
+    def test_non_allowed_methods(self):
+        response = self.client.put('/London/3/')
+        self.assertEqual(response.status_code, self.status.HTTP_405_METHOD_NOT_ALLOWED)
+
+class ParseData(unittest.TestCase):
+    def setUp(self):
+        import testdata as td
+        from validation import parse_data
+        self.test_input = td.sample_data
+        self.correct_output = td.response_to_test_data
+        self.parse_data = parse_data
+
+    def test_correct_parsing(self):
+        output_data = self.parse_data(self.test_input)
+        self.assertEqual(output_data, self.correct_output)
 class BuildURL(unittest.TestCase):
     def setUp(self):
         from validation import build_url

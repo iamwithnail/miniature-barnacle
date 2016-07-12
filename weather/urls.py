@@ -5,9 +5,9 @@ from django.contrib import admin
 from core import views
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
     url(r'(?P<city>[^/]+)/(?P<period_in_days>[0-9]{1,2})/$', views.weather_endpoint),
+    url(r'^/$', views.root),
     url(r'^admin/', admin.site.urls),
 ]
 
-#(?P<period_in_days>[0-9]{2})
+handler404 = views.page_not_found

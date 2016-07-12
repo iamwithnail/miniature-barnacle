@@ -30,9 +30,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = env("DJANGO_SECRET_KEY", default='12341234changemefortheloveofgodchangeme!!@@@')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env.bool('DJANGO_DEBUG', default=True)
+DEBUG = env.bool('DJANGO_DEBUG', default=False)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1']
 
 #Key for Weather APi - would normally remove this entirely and use just an env variable, but the local repo won't work
 #without it so leaving it here as a default; gives the option to use dev and production keys, too.
@@ -98,7 +98,7 @@ NOSE_ARGS = [
     '--cover-package=core']
 
 WSGI_APPLICATION = 'weather.wsgi.application'
-APPEND_SLASH=True
+APPEND_SLASH=False
 
 
 #No database

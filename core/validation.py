@@ -6,8 +6,9 @@ def validated_period(time_period):
     'if validated_period(number_of days)' and for input chaining.
     :param time_period: Should be an integer between 1 and 16 days
     :return: validated time_period """
-
-    if not isinstance(time_period, int):
+    try:
+        time_period = int(time_period)
+    except (TypeError, ValueError):
         raise ParseError(detail="Provided time period is not an integer between 1 and 16.")
     if time_period < 1 or time_period > 16:
         raise ParseError(detail="Provided time period is not an integer between 1 and 16.")
@@ -16,10 +17,10 @@ def validated_period(time_period):
 
 def is_city_valid(city_name):
     """
+    Sanitise for emoji citynames!
     :param city_name: utf-8 encoded text string.  API will lazily match strings, so valid encoding is most important.
     :return: Raise exception or validated city name.
     """
-
     try:
         city_name.decode('utf-8')
         return city_name
@@ -57,38 +58,25 @@ def create_data_list(field_name, weather_list):
 def parse_data(raw_data):
     """Takes the raw data from the response and splits it into appropriate lists that we can use elsewhere, like in
     rendering a graph.  List comprehensions in main function, but would use even more repetition, so reuses function
-    Design decision to use floating points rather than Decimal for the purposes of this small app. .
+    Design decision to use floating points rather than Decimal for the purposes of this small app.
     :param raw_data: response.text from openweather API
     :return: Dictionary containing lists of temperatures and humidity in unredacted floating points:
       """
     import numpy
     from datetime import datetime
-
-    #the following could go straight in the dictionary, but as there are some consequential values, it makes sense
-    #to declare them for reuse rather than repeating the list copmrehension to calculate the mean and modes.
-    max_temps = [x['temp']['max'] for x in raw_data]
-    min_temps = [x['temp']['min'] for x in raw_data]
-    humidity = create_data_list("humidity", raw_data)
-    daily_means = [numpy.mean(n) for n in zip(min_temps, max_temps)]
-
+    try:
+        #the following could go straight in the dictionary, but as there are some consequential values, it makes sense
+        #to declare them for reuse rather than repeating the list copmrehension to calculate the mean and modes.
+        max_temps = [x['temp']['max'] for x in raw_data]
+        min_temps = [x['temp']['min'] for x in raw_data]
+        humidity = create_data_list("humidity", raw_data)
+        daily_means = [numpy.mean(n) for n in zip(min_temps, max_temps)]
+    except(KeyError, ValueError):
+        raise
 
 
     dates = create_data_list("dt", raw_data)
-    print  {"data":
-                {"temperatures": {
-                    "max": max(max_temps),
-                    "min": max(min_temps),
-                    "mean": numpy.mean(daily_means),
-                    "median": numpy.median(daily_means)},
-                "humidity":{
-                    "max": max(humidity),
-                    "min": min(humidity),
-                    "mean": numpy.mean(humidity),
-                    "median": numpy.median(humidity),
-                    },
-                "start_date": datetime.fromtimestamp(min(dates))
-                }
-        }
+
 
     return {"data":
                 {"temperatures": {
@@ -102,7 +90,7 @@ def parse_data(raw_data):
                     "mean": numpy.mean(humidity),
                     "median": numpy.median(humidity),
                     },
-                "start_date": datetime.fromtimestamp(min(dates))
+                "start_date": str(datetime.fromtimestamp(min(dates)))
                 }
         }
 
@@ -117,16 +105,15 @@ def build_graph(parsed_data):
     :param parsed_data:
     :return SVG rendering of graph to be incorporated into web page:
     """
-
+    print parsed_data
     import pygal
     chart = pygal.Bar()
     chart.title = 'Weather for {city} from {date} for the next{days}'.format(city=parsed_data['city'],
-                                                                            date=parsed_data['start_date'],
+                                                                            date=parsed_data['data']['start_date'],
                                                                              days=parsed_data['number_of_days'])
-
     chart.x_labels = 'Min', 'Max', 'Median', 'Average'
     temperatures = parsed_data['data']['temperatures']
-    humidities = parsed_data['data']['humidities']
+    humidities = parsed_data['data']['humidity']
 
     chart.add('Temperature', [temperatures["min"],
                             temperatures["max"],

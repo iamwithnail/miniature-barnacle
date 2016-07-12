@@ -4,25 +4,14 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.exceptions import ParseError
 
-
-
-
-from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.renderers import JSONRenderer
-from rest_framework.parsers import JSONParser
-
-
-
-
-
 @api_view(['GET'])
 def weather_endpoint(request, city, period_in_days=3):
-    from validation import make_request, parse_data
+    print "DEBUG ENDPOINT", period_in_days, type(period_in_days)
+    from validation import make_request, parse_data, validated_period
     try:
-        response = make_request(city, period_in_days)
+        response = make_request(city, validated_period(period_in_days))
     except ParseError, e:
-        return Response({"detail": e}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"detail":e.detail}, status=status.HTTP_400_BAD_REQUEST)
 
     #strip out weather data from other details.
     raw_weather_data = response['list']
@@ -34,7 +23,18 @@ def weather_endpoint(request, city, period_in_days=3):
     return Response(full_response, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
-def render_graph(request, city, period_in_days=3):
-    from validation import build_graph
+def page_not_found(request):
+    content = {"detail": 'The endpoint you have requested has not been found.  Navigate to the root URL and use OPTIONS'}
+    return Response(content, status=status.HTTP_404_NOT_FOUND)
 
-    graph_data = build_graph(parsed_data)
+@api_view(['GET', 'OPTIONS'])
+def root(request):
+    if request.method=='GET':
+        content = {"detail": "URL working as expected. Use OPTIONS to see a list of endpoints and service description"}
+        return Response(content, status=status.HTTP_200_OK)
+    elif request.method=='OPTIONS':
+        content = {"description":  "Uses open weather API to provide mean, median, max and minimum temperatures and humidity for the next X days",
+                   "format": "/{city}/{number_of_days} - number of days should be between 1 and 16",
+                   "methods": "GET allowed to weather endpoint, other methods will be refused.  OPTIONS allowed on root"
+                   }
+        return Response(content, status=status.HTTP_200_OK)
