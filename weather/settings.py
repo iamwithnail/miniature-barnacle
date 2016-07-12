@@ -37,7 +37,7 @@ ALLOWED_HOSTS = []
 #Key for Weather APi - would normally remove this entirely and use just an env variable, but the local repo won't work
 #without it so leaving it here as a default; gives the option to use dev and production keys, too.
 APP_ID = env("OPEN_WEATHER_APP_ID", default="cea6b91ccc5f25041e7e094ef85787fe")
-BASE_API_URL="http://api.openweathermap.org/data/2.5/forecast"
+BASE_API_URL = "http://api.openweathermap.org/data/2.5/forecast"
 
 # Application definition
 
@@ -51,7 +51,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     #small range of third party apps here, keep them inline
     'rest_framework',
-    'corsheaders'
+    'corsheaders',
+    'django_nose',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -88,6 +89,13 @@ TEMPLATES = [
         },
     },
 ]
+
+#Testing settings
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+
+NOSE_ARGS = [
+    '--with-coverage',
+    '--cover-package=core']
 
 WSGI_APPLICATION = 'weather.wsgi.application'
 APPEND_SLASH=True

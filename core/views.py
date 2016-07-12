@@ -18,7 +18,7 @@ from rest_framework.parsers import JSONParser
 
 @api_view(['GET'])
 def weather_endpoint(request, city, period_in_days=3):
-    from validation import  make_request, parse_data
+    from validation import make_request, parse_data
     try:
         response = make_request(city, period_in_days)
     except ParseError, e:
