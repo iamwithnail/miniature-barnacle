@@ -1,9 +1,9 @@
 """Some of the longer data options for testing are placed here for readibility/replaceability.  Ideally these would be
 positioned as fixtures, alongside database data."""
-
+import datetime
 correct_url = "http://api.openweathermap.org/data/2.5/forecast/daily?q=London&mode=json&units=metric&cnt=3&APPID=cea6b91ccc5f25041e7e094ef85787fe"
 
-test_data_create_data_list = [{
+sample_data = [{
 u'clouds': 56,
     u'temp': {
         u'min': 10.13,
@@ -68,3 +68,14 @@ u'clouds': 56,
     u'speed': 3.91,
     u'deg': 329
 }]
+
+response_to_test_data = {'data':
+                             {'start_date': '2016-07-12 12:00:00',
+                              'temperatures': {'max': 18.39,
+                                               'mean': 14.293333333333335,
+                                               'median': 14.07,
+                                               'min': 12.07},
+                              'humidity': {'max': 79,
+                                           'mean': 78.0,
+                                           'median': 79.0,
+                                           'min': 76}}}
