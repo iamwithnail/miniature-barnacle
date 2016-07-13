@@ -1,6 +1,18 @@
 # miniature-barnacle
 
 **Installation** 
+
+Note: If installing on a *nix system, you may need to install the development versions of two libraries - the build below will fail with the message 
+
+```
+make sure the development packages of libxml2 and libxslt are installed * 
+``` 
+at the requirements.txt stage.   If that happens, run 
+``` 
+sudo apt-get install python-dev libxml2-dev libxslt1-dev zlib1g-dev 
+```
+These libraries support Pygal & Numpy.  Otherwise, run: 
+
 ```
     Virtualenv env
     source env/bin/activate
@@ -21,7 +33,8 @@ python manage.py runserver
 **In production** we recommend running Gunicorn behind an NGINX reverse proxy.   
 
 Although the repo will run with defaults, these are publicly available and therefore not secure.  You should [set environment variables](https://www.digitalocean.com/community/tutorials/how-to-read-and-set-environmental-and-shell-variables-on-a-linux-vps) for DJANGO_DEBUG, DJANGO_SECRET_KEY and OPEN_WEATHER_APP_ID.
-OpenWeatherMap.org has free keys available. 
+OpenWeatherMap.org has free keys available.   
+
 ```
   pip install gunicorn 
 ```
@@ -46,4 +59,5 @@ The OpenWeatherAPI will match almost anything, including some Unicode characters
 - Lack of testing of graph validity is unsatisfactory - pyquery installed to allow some length checking for axes, etc, but not yet implemented.  
 - Investigate divergence between Unit test on url encoded hashes and manually checked browsers.  Former truncates the URL and gives a 404, latter trips the validation and correctly returns 400 Bad Request with appropriate detail. Neither processes the hash (as desired).  
 - Improve test coverage - currently 76%, largely driven by lack of graph testing. 
+- Migrate to Py3 - the numpy (very heavyweight and large) dependency could be resolved using Python3. 
 
