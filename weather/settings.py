@@ -10,13 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 #use django-environ so we can set secret key through Env Variables in production and keep key out of VCS
+import environ
+env = environ.Env()
 
 #set root_dir so we can set relative paths for static, etc.
 ROOT_DIR = environ.Path(__file__) - 3  # (/a/b/myfile.py - 3 = /)
 APPS_DIR = ROOT_DIR.path('weather')
-import environ
-env = environ.Env()
-env.read_env(ROOT_DIR('.env'))
 
 import os
 
