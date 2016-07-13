@@ -4,7 +4,7 @@
 ```
     Virtualenv env
     source env/bin/activate
-    git clone https://github.com/iamwithnail/miniature-barnacle.git 
+    git clone https://github.com/iamwithnail/miniature-barnacle.git weather
     cd weather
     pip install -r requirements.txt
     python manage.py collectstatic 
