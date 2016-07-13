@@ -6,7 +6,8 @@ from core import views
 
 urlpatterns = [
     url(r'(?P<city>[^/]+)/(?P<period_in_days>[0-9]{1,2})/$', views.weather_endpoint),
-    url(r'^/$', views.root),
+    url(r'(?P<city>[^/]+)/(?P<period_in_days>[0-9]{1,2})/graph/$', views.graph_endpoint),
+    url(r'^$', views.root),
     url(r'^admin/', admin.site.urls),
 ]
 

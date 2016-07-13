@@ -43,10 +43,17 @@ class WeatherEndpoint(APITestCase):
         response = self.client.put('/London/3/')
         self.assertEqual(response.status_code, self.status.HTTP_405_METHOD_NOT_ALLOWED)
 
+    def test_malicious_url_encoded_hash_get(self):
+        #interesting divergence between manually testing this and unit tests - manual browser
+        #gives the 'correct' 400 Parse Error with Hash related detail.  This gives a truncated URL and therefore
+        #404 not found - need to investigate.
+        response = self.client.get(r'San#MaliciousCodeFrancisco/3/')
+        self.assertEqual(response.status_code, self.status.HTTP_404_NOT_FOUND)
+
 class ParseData(unittest.TestCase):
     def setUp(self):
         import testdata as td
-        from validation import parse_data
+        from data_manager import parse_data
         self.test_input = td.sample_data
         self.correct_output = td.response_to_test_data
         self.parse_data = parse_data
@@ -54,9 +61,10 @@ class ParseData(unittest.TestCase):
     def test_correct_parsing(self):
         output_data = self.parse_data(self.test_input)
         self.assertEqual(output_data, self.correct_output)
+
 class BuildURL(unittest.TestCase):
     def setUp(self):
-        from validation import build_url
+        from data_manager import build_url
         import testdata
         self.pass_city = "London"
         self.correct_url = testdata.correct_url
@@ -71,3 +79,5 @@ class BuildURL(unittest.TestCase):
     def test_invalid(self):
         with self.assertRaises(TypeError):
             self.build_url(self.fail_city,"London")
+
+
