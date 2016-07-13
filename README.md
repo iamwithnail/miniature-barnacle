@@ -40,7 +40,7 @@ OpenWeatherMap.org has free keys available.
 ```
 from main directory (containing manage.py)
 ```
-../env/bin/gunicorn -b 127.0.0.1:8081 -w 2 core.wsgi:application 
+../env/bin/gunicorn -b 127.0.0.1:8081 -w 2 weather.wsgi:application 
 ```
 
 **Usage**
