@@ -21,7 +21,8 @@ These libraries support Pygal & Numpy.  Otherwise, run:
     pip install -r requirements.txt
     python manage.py collectstatic 
     python manage.py makemigrations 
-    python manage.py migrate 
+    python manage.py migrate
+    python manage.py test
     
 ```
 
@@ -60,4 +61,5 @@ The OpenWeatherAPI will match almost anything, including some Unicode characters
 - Investigate divergence between Unit test on url encoded hashes and manually checked browsers.  Former truncates the URL and gives a 404, latter trips the validation and correctly returns 400 Bad Request with appropriate detail. Neither processes the hash (as desired).  
 - Improve test coverage - currently 76%, largely driven by lack of graph testing. 
 - Migrate to Py3 - the numpy (very heavyweight and large) dependency could be resolved using Python3. 
+- Odd behaviour around leading slash for / root URL (being deprecated in 1.10) - unittests resolve this to / when no leading slash present in urls.py, but browser correctly resolves to 404 handler.  
 
